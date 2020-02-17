@@ -8,7 +8,7 @@ categories: Algorithm
 # 플로이드 와샬 알고리즘이란?
 
 점과 점 사이의 최단 거리를 구하는 알고리즘으로 **모든 점에서부터 모든 점까지의 최단 거리**를 구할 수 있습니다.  
-또한 DP 를 이용한 알고리즘이기 때문에 **음수 가중치 처리**가 가능합니다.(그리디 알고리즘인 다익스트라 알고리즘은 불가능합니다.)  
+또한 DP 를 이용한 알고리즘이기 때문에 **음수 가중치 처리**가 가능합니다.  (그리디 알고리즘인 다익스트라 알고리즘은 불가능합니다.)  
 기본적인 아이디어는 다음과 같습니다.
 
 ```
@@ -54,12 +54,12 @@ public static void Floid(){
 
 * * *
 
-# 엘리베이터(2593)
+# 파티(1238)
 
 <details>
 <summary border="1" style = "font-size:1.5em;">문제</summary>
 <div markdown="1">
-![KOI1-1](https://leejaeseung.github.io/img/FW/FW1_1.PNG)
+![FW1-1](https://leejaeseung.github.io/img/FW/FW1_1.PNG)
 </div>
 </details>
 
@@ -138,7 +138,146 @@ public class Main {
 
 ```
 
-![KOI1-3](https://leejaeseung.github.io/img/FW/FW1_2.PNG)
+![FW1-2](https://leejaeseung.github.io/img/FW/FW1_2.PNG)
+
+</div>
+</details>
+
+* * *
+
+# 도망자 원숭이(1602)
+
+<details>
+<summary border="1" style = "font-size:1.5em;">문제</summary>
+<div markdown="1">
+![FW1-1](https://leejaeseung.github.io/img/FW/FW2_1.PNG)
+![FW1-2](https://leejaeseung.github.io/img/FW/FW2_2.PNG)
+</div>
+</details>
+
+* * *
+
+## 풀이
+
+각 거리 배열 값은 괴롭히는 시간을 더한 값을 넣어줍니다.
+
+a->b 와 a->c->b 중 더 작은 값을 갱신할 때, a->c 의 괴롭히는 시간 값과 c->b 의 괴롭히는 시간 중 더 큰값으로 비교해 줍니다.
+중간 노드인 c 를 비교하는 순서는 괴롭히는 시간이 작은 순서로 비교해주어야 합니다.
+
+* * *
+
+<details>
+<summary border="1" style = "font-size:1.5em;">코드</summary>
+<div markdown="1">
+
+``` java
+
+import java.io.*;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    public static int N, M, Q;
+    public static int[][] dist;
+    public static int[] city;
+    public static int[][] plus;
+    public static PriorityQueue<tuple> pq;
+    public static void main(String[] argc) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        pq = new PriorityQueue<>(new Comparator<tuple>() {
+            @Override
+            public int compare(tuple tuple, tuple t1) {
+                return tuple.value >= t1.value ? 1 : -1;
+            }
+        });
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        Q = Integer.parseInt(st.nextToken());
+
+        city = new int[N + 1];
+        dist = new int[N + 1][N + 1];
+        plus = new int[N + 1][N + 1];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 1; i <= N ; i++) {
+            city[i] = Integer.parseInt(st.nextToken());
+            pq.offer(new tuple(i, city[i]));
+        }
+
+        for (int i = 1; i <= N ; i++) {
+            for (int j = 1; j <= N ; j++) {
+                plus[i][j] = Math.max(city[i], city[j]);
+                dist[i][j] = 1000000000;
+                if(i == j) {
+                    dist[i][j] = 0;
+                    plus[i][j] = 0;
+                }
+            }
+        }
+
+        for (int i = 0; i < M ; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int d = Integer.parseInt(st.nextToken());
+
+            int p = Math.max(city[a], city[b]);
+            dist[a][b] = d + p;
+            dist[b][a] = d + p;
+        }
+        Floid();
+
+        for (int i = 0; i < Q ; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
+
+            if(dist[start][end] != 1000000000)
+                bw.write(dist[start][end] + "\n");
+            else
+                bw.write(-1 + "\n");
+        }
+        bw.flush();
+        bw.close();
+    }
+    public static void Floid(){
+        while(!pq.isEmpty()) {
+            int i = pq.poll().index;
+            for (int j = 1; j <= N ; j++) {
+                for (int k = 1; k <= N ; k++) {
+                    if(j == k)  continue;
+                    if(i == j || i == k) continue;
+                    int p = Math.max(plus[j][i], plus[i][k]);
+                    if(dist[j][k] > dist[j][i] + dist[i][k] + p - plus[j][i] - plus[i][k]){
+                        //중간 경로 i 가 추가된다.
+                        dist[j][k] = dist[j][i] + dist[i][k] + p - plus[j][i] - plus[i][k];
+                        plus[j][k] = p;
+                    }
+                }
+            }
+        }
+    }
+}
+
+class tuple {
+    int index;
+    int value;
+    public tuple(int index, int value){
+        this.index = index;
+        this.value = value;
+    }
+}
+
+```
+
+![FW1-3](https://leejaeseung.github.io/img/FW/FW1_3.PNG)
 
 </div>
 </details>
