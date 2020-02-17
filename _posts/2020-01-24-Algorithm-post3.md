@@ -3,7 +3,6 @@ layout: post
 title: "한국 정보 올림피아드"
 date: 2020-01-10 20:08:10
 categories: Algorithm BOJ
-image: 'https://leejaeseung.github.io/img/백준로고.png'
 ---
 * * *
 

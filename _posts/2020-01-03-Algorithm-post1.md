@@ -3,7 +3,6 @@ layout: post
 title: "BOJ 대학교 대회 - 성균관 대학교(4/7)"
 date: 2020-01-05 19:17:10
 categories: Algorithm BOJ
-image: 'https://leejaeseung.github.io/img/백준로고.png'
 ---
 * * *
 

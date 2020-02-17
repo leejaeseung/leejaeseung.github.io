@@ -52,3 +52,95 @@ public static void Floid(){
 
 # 연습 문제
 
+* * *
+
+# 엘리베이터(2593)
+
+<details>
+<summary border="1" style = "font-size:1.5em;">문제</summary>
+<div markdown="1">
+![KOI1-1](https://leejaeseung.github.io/img/FW/FW1_1.PNG)
+</div>
+</details>
+
+* * *
+
+## 풀이
+
+플로이드 와샬 기본 문제입니다.  
+모든 최단 경로를 구하고, 집->X 의 거리 + X->집 의 거리가 최대인 학생을 구합니다.
+
+* * *
+
+<details>
+<summary border="1" style = "font-size:1.5em;">코드</summary>
+<div markdown="1">
+
+``` java
+
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    public static int N, M, X;
+    public static int[][] dist;
+    public static void main(String[] argc) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        X = Integer.parseInt(st.nextToken());
+
+        dist = new int[N + 1][N + 1];
+        for (int i = 0; i <= N ; i++) {
+            for (int j = 0; j <= N ; j++) {
+                dist[i][j] = 10000000;
+                if(i == j)
+                    dist[i][j] = 0;
+                //자기 자신은 0으로 초기화!
+            }
+        }
+
+        for (int i = 0; i < M ; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            int d = Integer.parseInt(st.nextToken());
+
+            dist[from][to] = d;
+        }
+        Floid();
+
+        int max = 0;
+        for (int i = 1; i <= N ; i++) {
+            max = Math.max(max, dist[i][X] + dist[X][i]);
+        }
+
+        bw.write(Integer.toString(max));
+        bw.flush();
+        bw.close();
+    }
+    public static void Floid(){
+        for (int i = 1; i <= N ; i++) {
+            for (int j = 1; j <= N ; j++) {
+                for (int k = 1; k <= N ; k++) {
+                    dist[j][k] = Math.min(dist[j][k], dist[j][i] + dist[i][k]);
+                    //거리 덧셈에서 오버플로우 조심!
+                }
+            }
+        }
+    }
+}
+
+```
+
+![KOI1-3](https://leejaeseung.github.io/img/FW/FW1_2.PNG)
+
+</div>
+</details>
+
+* * *
